@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - School Feedback System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div style="max-width: 400px; margin: 60px auto; padding: 20px; font-family: Arial, sans-serif; border: 1px solid #ddd; border-radius: 5px;">
+        <h2>System Login</h2>
+        
+        <% if (error) { %>
+            <div style="background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form action="/auth/login" method="POST">
+            <div style="margin-bottom: 15px;">
+                <label>Email Address:</label><br>
+                <input type="email" name="email" required style="width: 100%; padding: 8px; box-sizing: border-box;" placeholder="admin@school.edu">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label>Password:</label><br>
+                <input type="password" name="password" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+            </div>
+
+            <button type="submit" style="background: #007BFF; color: white; padding: 10px; border: none; cursor: pointer; width: 100%;">Login</button>
+        </form>
+        <br>
+        <p style="text-align: center;"><a href="/">Back to Home</a></p>
+    </div>
+        </div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - School Feedback System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div style="max-width: 1000px; margin: 30px auto; padding: 20px; font-family: Arial, sans-serif;">
+        <h2>Admin Dashboard - Ticket Management Queue</h2>
+        <p><a href="/">Back to Home</a></p>
+        <hr style="margin: 20px 0;">
+
+        <% if (tickets.length === 0) { %>
+            <p>No feedback tickets found in the system yet.</p>
+        <% } else { %>
+            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="background: #f4f4f4;">
+                        <th>Tracking Code</th>
+                        <th>Category / Title</th>
+                        <th>Location</th>
+                        <th>Submitter</th>
+                        <th>Current Status</th>
+                        <th>Action / Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% tickets.forEach(ticket => { %>
+                        <tr>
+                            <td><strong><%= ticket.tracking_code %></strong></td>
+                            <td>
+                                <span style="font-size: 11px; background: #e9ecef; padding: 2px 6px;"><%= ticket.category %></span><br>
+                                <strong><%= ticket.title %></strong><br>
+                                <small><%= ticket.description %></small>
+                            </td>
+                            <td><%= ticket.location %></td>
+                            <td><%= ticket.is_anonymous ? 'Anonymous' : 'Authenticated User' %></td>
+                            <td><strong style="color: #007bff;"><%= ticket.status %></strong></td>
+                            <td>
+                                <!-- Status Update Form -->
+                                <form action="/admin/ticket/<%= ticket.id %>/update" method="POST" style="margin-top: 5px;">
+                                    <select name="status" style="padding: 4px; margin-bottom: 5px; width: 100%;">
+                                        <option value="Submitted" <%= ticket.status === 'Submitted' ? 'selected' : '' %>>Submitted</option>
+                                        <option value="Under Review" <%= ticket.status === 'Under Review' ? 'selected' : '' %>>Under Review</option>
+                                        <option value="In Progress" <%= ticket.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                                        <option value="Resolved" <%= ticket.status === 'Resolved' ? 'selected' : '' %>>Resolved</option>
+                                        <option value="Closed" <%= ticket.status === 'Closed' ? 'selected' : '' %>>Closed</option>
+                                    </select>
+                                    <input type="text" name="admin_remarks" placeholder="Add official remark..." value="<%= ticket.admin_remarks || '' %>" style="padding: 4px; width: 100%; margin-bottom: 5px; box-sizing: border-box;">
+                                    <button type="submit" style="background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; width: 100%;">Update Ticket</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+</body>
+</html>

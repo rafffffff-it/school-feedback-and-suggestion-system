@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - School Feedback System</title>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 40px;">
+    <div style="max-width: 400px; margin: 0 auto; border: 1px solid #ccc; padding: 20px; border-radius: 5px;">
+        <h2>Create an Account</h2>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <p style="color: red;"><%= error %></p>
+        <% } %>
+
+        <form action="/auth/register" method="POST">
+            <div style="margin-bottom: 10px;">
+                <label>Full Name:</label><br>
+                <input type="text" name="name" required style="width: 100%; padding: 8px;">
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label>Email Address:</label><br>
+                <input type="email" name="email" required style="width: 100%; padding: 8px;">
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label>Password:</label><br>
+                <input type="password" name="password" required style="width: 100%; padding: 8px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label>Role:</label><br>
+                <select name="role" style="width: 100%; padding: 8px;">
+                    <option value="student">Student</option>
+                    <option value="faculty">Faculty</option>
+                    <option value="staff">Staff</option>
+                </select>
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer;">Register</button>
+        </form>
+
+        <p style="margin-top: 15px;"><a href="/auth/login">Already have an account? Log in here.</a></p>
+    </div>
+</body>
+</html>
