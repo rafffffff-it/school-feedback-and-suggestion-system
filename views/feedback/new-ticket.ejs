@@ -3,59 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Feedback - School Feedback System</title>
+    <title>Add New Record - EDUVoice</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <div style="max-width: 600px; margin: 40px auto; padding: 20px; font-family: Arial, sans-serif;">
-        <!-- Back Button Added -->
-        <p><a href="/" style="text-decoration: none; color: #007bff; font-weight: bold;">← Back to Home</a></p>
+<body class="dashboard-body">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <a class="dashboard-logo" href="/dashboard">EDUVoice</a>
+            <nav class="dashboard-nav" aria-label="Main navigation">
+                <a class="dashboard-nav-item" href="/dashboard"><span aria-hidden="true">⌂</span>Dashboard</a>
+                <a class="dashboard-nav-item" href="/feedback/mine"><span aria-hidden="true">♧</span>My Feedback</a>
+                <a class="dashboard-nav-item active" href="/feedback/new" aria-current="page"><span aria-hidden="true">✎</span>Submit Suggestion</a>
+                <a class="dashboard-nav-item" href="/dashboard#campus-announcements"><span aria-hidden="true">⚑</span>Campus Notices</a>
+                <a class="dashboard-nav-item" href="/auth/profile"><span aria-hidden="true">♙</span>Profile</a>
+                <a class="dashboard-nav-item" href="/auth/settings"><span aria-hidden="true">⚙</span>Settings</a>
+            </nav>
+            <a class="dashboard-nav-item dashboard-logout" href="/auth/logout"><span aria-hidden="true">⇥</span>Logout</a>
+        </aside>
 
-        <h2>Submit Campus Feedback or Suggestion</h2>
-        
-        <!-- Added enctype for multipart file uploads -->
-        <form action="/feedback/new" method="POST" enctype="multipart/form-data">
-            
-            <div style="margin-bottom: 15px;">
-                <label>Category:</label><br>
-                <select name="category" required style="width: 100%; padding: 8px;">
-                    <option value="Campus Facilities">Campus Facilities</option>
-                    <option value="Academic Services">Academic Services</option>
-                    <option value="Cafeteria & Health">Cafeteria & Health</option>
-                    <option value="Accessibility & Safety">Accessibility & Safety</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
+        <main class="record-main">
+            <header class="record-header">
+                <h1>Add New Record</h1>
+                <span><%= session && session.user ? (session.user.role === 'admin' ? 'Campus Administrator' : session.user.name) : 'Campus Community' %></span>
+            </header>
 
-            <div style="margin-bottom: 15px;">
-                <label>Title / Issue Summary:</label><br>
-                <input type="text" name="title" required style="width: 100%; padding: 8px;" placeholder="e.g., Broken projector in Room 402">
-            </div>
+            <section class="record-card">
+                <div class="record-card-heading">
+                    <h2>Add Feedback/Suggestion Record</h2>
+                    <p>Enter the details below to create a new campus record</p>
+                </div>
 
-            <div style="margin-bottom: 15px;">
-                <label>Location / Room Details:</label><br>
-                <input type="text" name="location" required style="width: 100%; padding: 8px;" placeholder="e.g., Science Building, 2nd Floor">
-            </div>
+                <% if (error) { %>
+                    <div class="alert-error"><%= error %></div>
+                <% } %>
 
-            <div style="margin-bottom: 15px;">
-                <label>Description:</label><br>
-                <textarea name="description" rows="5" required style="width: 100%; padding: 8px;" placeholder="Provide clear details about your suggestion or issue..."></textarea>
-            </div>
+                <% if (successMessage) { %>
+                    <div class="alert-success feedback-success">
+                        <strong>Record submitted successfully</strong>
+                        <span><%= successMessage %></span>
+                        <a href="/feedback/mine">View feedback records</a>
+                    </div>
+                <% } %>
 
-            <!-- File Upload Field (10MB limit, Images/PDFs) -->
-            <div style="margin-bottom: 15px;">
-                <label>Attach Supporting File / Evidence (Optional, Max 10MB - Images or PDF):</label><br>
-                <input type="file" name="attachment" accept=".jpg, .jpeg, .png, .gif, .pdf" style="width: 100%; padding: 8px; box-sizing: border-box;">
-            </div>
+                <form action="/feedback/new" method="POST" enctype="multipart/form-data" class="record-form">
+                    <div class="record-form-grid">
+                        <div class="record-field">
+                            <label for="title">Record Title</label>
+                            <input id="title" type="text" name="title" required minlength="5" maxlength="255" value="<%= formData ? formData.title || '' : '' %>" placeholder="Enter a concise title for the feedback">
+                        </div>
 
-            <div style="margin-bottom: 15px;">
-                <label>
-                    <input type="checkbox" name="is_anonymous"> Submit Anonymously
-                </label>
-            </div>
+                        <div class="record-field">
+                            <label for="category">Category</label>
+                            <select id="category" name="category" required>
+                                <option value="">Select category...</option>
+                                <option value="Campus Facilities" <%= formData && formData.category === 'Campus Facilities' ? 'selected' : '' %>>Campus Facilities</option>
+                                <option value="Academic Services" <%= formData && formData.category === 'Academic Services' ? 'selected' : '' %>>Academic Services</option>
+                                <option value="Cafeteria & Health" <%= formData && formData.category === 'Cafeteria & Health' ? 'selected' : '' %>>Cafeteria & Health</option>
+                                <option value="Accessibility & Safety" <%= formData && formData.category === 'Accessibility & Safety' ? 'selected' : '' %>>Accessibility & Safety</option>
+                                <option value="Other" <%= formData && formData.category === 'Other' ? 'selected' : '' %>>Other</option>
+                            </select>
+                        </div>
 
-            <button type="submit" style="background: #007BFF; color: white; padding: 10px 20px; border: none; cursor: pointer;">Submit Ticket</button>
-        </form>
+                        <div class="record-field">
+                            <label for="location">Location / Room</label>
+                            <input id="location" type="text" name="location" required maxlength="255" value="<%= formData ? formData.location || '' : '' %>" placeholder="Building, room, or campus area">
+                        </div>
+
+                        <div class="record-field record-privacy-field">
+                            <label>Submitted By</label>
+                            <label class="record-anonymous-option" for="is_anonymous">
+                                <input type="checkbox" name="is_anonymous" id="is_anonymous" <%= formData && formData.is_anonymous === 'on' ? 'checked' : '' %>>
+                                <span>Submit anonymously</span>
+                            </label>
+                            <small>Your account is associated with the record unless you choose anonymous submission.</small>
+                        </div>
+
+                        <div class="record-field record-full-width">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" rows="4" required minlength="10" placeholder="Provide detailed description of the feedback or suggestion..."><%= formData ? formData.description || '' : '' %></textarea>
+                        </div>
+
+                        <div class="record-field record-full-width">
+                            <label for="attachment">Attachments <span>(Optional)</span></label>
+                            <label class="record-file-picker" for="attachment">
+                                <span aria-hidden="true">⌁</span>
+                                <span class="record-file-label">Upload File (PDF, PNG, JPG)</span>
+                                <input id="attachment" type="file" name="attachment" accept=".jpg,.jpeg,.png,.gif,.pdf">
+                            </label>
+                            <small>Maximum file size: 10 MB.</small>
+                        </div>
+                    </div>
+
+                    <div class="record-form-actions">
+                        <a href="/dashboard" class="record-cancel">Cancel</a>
+                        <button type="submit" class="record-submit">Submit Record</button>
+                    </div>
+                </form>
+            </section>
+        </main>
     </div>
 </body>
 </html>

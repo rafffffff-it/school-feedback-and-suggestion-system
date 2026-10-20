@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dashboard-body">
+    <main class="simple-page profile-page">
+        <a href="/dashboard" class="simple-back-link">← Back to dashboard</a>
+        <section class="simple-card profile-card">
+            <header class="profile-heading">
+                <div class="profile-large-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+                <div>
+                    <p class="feedback-eyebrow">EDUVoice account</p>
+                    <h1>My Profile</h1>
+                    <p>View your account details and manage your settings.</p>
+                </div>
+            </header>
+
+            <div class="profile-details">
+                <div class="profile-detail">
+                    <span>Full name</span>
+                    <strong><%= user.name %></strong>
+                </div>
+                <div class="profile-detail">
+                    <span>Email address</span>
+                    <strong><%= user.email %></strong>
+                </div>
+                <div class="profile-detail">
+                    <span>Account role</span>
+                    <strong class="profile-role"><%= user.role %></strong>
+                </div>
+                <div class="profile-detail">
+                    <span>Member since</span>
+                    <strong><%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></strong>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <a class="dashboard-action primary" href="/auth/settings">Edit Profile Settings</a>
+                <a class="dashboard-action secondary" href="/feedback/mine">View My Feedback</a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

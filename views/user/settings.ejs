@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - EDUVoice</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dashboard-body">
+  <main class="simple-page">
+    <a class="simple-back-link" href="/dashboard">← Back to dashboard</a>
+    <section class="simple-card">
+      <h1>Settings</h1>
+      <p>Manage the name shown on your EDUVoice account.</p>
+      <% if (error) { %><div class="alert-error"><%= error %></div><% } %>
+      <% if (successMessage) { %><div class="alert-success"><%= successMessage %></div><% } %>
+      <form action="/auth/settings" method="POST">
+        <label for="name">Display name</label>
+        <input id="name" name="name" type="text" value="<%= user.name %>" minlength="2" maxlength="100" required>
+        <div class="settings-account-email"><strong>Account email</strong><span><%= user.email %></span></div>
+        <button class="dashboard-action primary" type="submit">Save Settings</button>
+      </form>
+      <a class="simple-secondary-link" href="/auth/profile">View Profile</a>
+    </section>
+  </main>
+</body>
+</html>

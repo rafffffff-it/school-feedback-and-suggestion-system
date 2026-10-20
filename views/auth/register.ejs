@@ -1,47 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - School Feedback System</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - EDUVoice</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body style="font-family: Arial, sans-serif; padding: 40px;">
-    <div style="max-width: 400px; margin: 0 auto; border: 1px solid #ccc; padding: 20px; border-radius: 5px;">
-        <h2>Create an Account</h2>
+<body class="register-body">
+  <div class="register-screen">
+    <div class="register-brand-panel">
+      <div class="register-brand-content">
+        <div class="edu-logo">EDUVoice</div>
+        <div class="brand-tag">description</div>
+      </div>
 
-        <% if (typeof error !== 'undefined' && error) { %>
-            <p style="color: red;"><%= error %></p>
+      <div class="register-heading-wrap">
+        <h1>Register for your<br>EDUVoice account.</h1>
+        <p>
+          Join our student and faculty network to share feedback, suggestions, and connect with your campus community.
+        </p>
+      </div>
+    </div>
+
+    <div class="register-auth-panel">
+      <div class="register-card">
+        <h2>Create an Account</h2>
+        <p class="register-subhead">Get started with your campus credentials</p>
+
+        <% if (error) { %>
+          <div class="alert-error"><%= error %></div>
+        <% } %>
+
+        <% if (successMessage) { %>
+          <div class="alert-success"><%= successMessage %></div>
         <% } %>
 
         <form action="/auth/register" method="POST">
-            <div style="margin-bottom: 10px;">
-                <label>Full Name:</label><br>
-                <input type="text" name="name" required style="width: 100%; padding: 8px;">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <div class="input-wrap">
+              <span class="input-icon">◌</span>
+              <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Campus Email</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉</span>
+              <input type="email" id="email" name="email" placeholder="username@student.univ.edu" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="role">Your Role</label>
+            <div class="role-select-wrap">
+              <select id="role" name="role">
+                <option value="student" selected>Student</option>
+                <option value="faculty">Faculty/Staff</option>
+                <option value="admin">Administrator</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="double-field-row">
+            <div class="form-group">
+              <label for="password">Password</label>
+              <div class="input-wrap">
+                <span class="input-icon">◒</span>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+              </div>
             </div>
 
-            <div style="margin-bottom: 10px;">
-                <label>Email Address:</label><br>
-                <input type="email" name="email" required style="width: 100%; padding: 8px;">
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <div class="input-wrap">
+                <span class="input-icon">◒</span>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required>
+              </div>
             </div>
+          </div>
 
-            <div style="margin-bottom: 10px;">
-                <label>Password:</label><br>
-                <input type="password" name="password" required style="width: 100%; padding: 8px;">
-            </div>
+          <div class="terms-block">
+            <label class="checkbox-row">
+              <input type="checkbox" name="terms" required>
+              <span>I agree to the Terms of Service and Privacy Policy</span>
+            </label>
+          </div>
 
-            <div style="margin-bottom: 15px;">
-                <label>Role:</label><br>
-                <select name="role" style="width: 100%; padding: 8px;">
-                    <option value="student">Student</option>
-                    <option value="faculty">Faculty</option>
-                    <option value="staff">Staff</option>
-                </select>
-            </div>
-
-            <button type="submit" style="width: 100%; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer;">Register</button>
+          <button type="submit" class="register-submit-btn">Create Account</button>
         </form>
 
-        <p style="margin-top: 15px;"><a href="/auth/login">Already have an account? Log in here.</a></p>
+        <div class="register-link">
+          Already have an account? <a href="/auth/login">Sign In</a>
+        </div>
+      </div>
     </div>
+  </div>
 </body>
 </html>

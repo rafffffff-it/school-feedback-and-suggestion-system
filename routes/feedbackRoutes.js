@@ -1,70 +1,118 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
-const upload = require('../middleware/uploadMiddleware'); // Import upload middleware
+const upload = require('../middleware/uploadMiddleware');
 
-// ==================== 1. FEEDBACK SUBMISSION ROUTES ====================
+const validCategories = ['Campus Facilities', 'Academic Services', 'Cafeteria & Health', 'Accessibility & Safety', 'Other'];
 
-// GET /feedback/new - Show the feedback submission form
-router.get('/new', (req, res) => {
-    res.render('feedback/new-ticket'); // Renders views/feedback/new-ticket.ejs
+function requireAuthentication(req, res, next) {
+    if (req.session && req.session.user) {
+        return next();
+    }
+
+    req.session.returnTo = req.originalUrl;
+    return res.redirect('/auth/login');
+}
+
+router.get('/new', requireAuthentication, (req, res) => {
+    res.render('feedback/new-ticket', {
+        error: null,
+        formData: null,
+        successMessage: null
+    });
 });
 
-// POST /feedback/new - Handle form submission with file upload support
-router.post('/new', upload.single('attachment'), async (req, res) => {
+router.post('/new', requireAuthentication, upload.single('attachment'), async (req, res) => {
     try {
-        const { category, title, location, description, is_anonymous } = req.body;
-        
-        // Generate a unique tracking code (e.g., TCK-XXXXXX)
+        const category = (req.body.category || '').trim();
+        const title = (req.body.title || '').trim();
+        const location = (req.body.location || '').trim();
+        const description = (req.body.description || '').trim();
+        const isAnonymous = req.body.is_anonymous === 'on' ? 1 : 0;
+        const userId = req.session.user.id;
+
+        if (!validCategories.includes(category)) {
+            return res.status(400).render('feedback/new-ticket', {
+                error: 'Please select a valid feedback category.',
+                formData: req.body,
+                successMessage: null
+            });
+        }
+
+        if (!title || title.length < 5 || !location || !description || description.length < 10) {
+            return res.status(400).render('feedback/new-ticket', {
+                error: 'Title, location, and description are required. Please provide useful details.',
+                formData: req.body,
+                successMessage: null
+            });
+        }
+
         const trackingCode = 'TCK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        
-        // Determine if anonymous
-        const anonymousFlag = is_anonymous === 'on' ? 1 : 0;
-        
-        // Get file path if an attachment was uploaded (up to 10MB)
         const attachmentPath = req.file ? '/uploads/' + req.file.filename : null;
-        
-        // Insert into database including attachment_path
+
         await db.query(
-            `INSERT INTO tickets (category, title, location, description, is_anonymous, tracking_code, attachment_path, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Submitted')`,
-            [category, title, location, description, anonymousFlag, trackingCode, attachmentPath]
+            `INSERT INTO tickets (user_id, category, title, location, description, is_anonymous, tracking_code, attachment_path, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Submitted')`,
+            [userId, category, title, location, description, isAnonymous, trackingCode, attachmentPath]
         );
 
-        res.send(`<h1>Success!</h1><p>Your feedback has been submitted.</p><p>Your tracking code is: <strong>${trackingCode}</strong></p><a href="/feedback/new">Submit another</a> | <a href="/feedback/track">Track a ticket</a>`);
+        return res.redirect(`/feedback/mine?submitted=${encodeURIComponent(trackingCode)}`);
     } catch (err) {
         console.error(err);
         res.status(500).send('Server error while submitting feedback.');
     }
 });
 
-
-// ==================== 2. TICKET TRACKING ROUTES ====================
-
-// GET /feedback/track - Show the tracking search page
 router.get('/track', (req, res) => {
     res.render('feedback/track-status', { ticket: null, error: null });
 });
 
-// POST /feedback/track - Search for the ticket by tracking code
+router.get('/mine', async (req, res) => {
+    if (!req.session || !req.session.user) {
+        req.session.returnTo = '/feedback/mine';
+        return res.redirect('/auth/login');
+    }
+
+    try {
+        const [tickets] = await db.query(
+            'SELECT * FROM tickets WHERE user_id = ? ORDER BY created_at DESC',
+            [req.session.user.id]
+        );
+        const submittedCode = typeof req.query.submitted === 'string'
+            && /^TCK-[A-Z0-9]{6}$/.test(req.query.submitted)
+            ? req.query.submitted
+            : null;
+        return res.render('feedback/my-feedback', { tickets, submittedCode });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send('Server error while loading your feedback.');
+    }
+});
+
+router.get('/faq', (req, res) => {
+    res.render('feedback/faq');
+});
+
 router.post('/track', async (req, res) => {
     try {
-        const { tracking_code } = req.body;
-        
-        // Query database for the ticket
-        const [rows] = await db.query(
-            'SELECT * FROM tickets WHERE tracking_code = ?',
-            [tracking_code.trim().toUpperCase()]
-        );
+        const trackingCode = (req.body.tracking_code || '').trim().toUpperCase();
 
-        if (rows.length === 0) {
-            // If code doesn't exist
-            return res.render('feedback/track-status', { 
-                ticket: null, 
-                error: 'Ticket code not found. Please verify and try again.' 
+        if (!trackingCode) {
+            return res.render('feedback/track-status', {
+                ticket: null,
+                error: 'Please enter a tracking code.'
             });
         }
 
-        // Render the tracking page with ticket details
+        const [rows] = await db.query('SELECT * FROM tickets WHERE tracking_code = ?', [trackingCode]);
+
+        if (rows.length === 0) {
+            return res.render('feedback/track-status', {
+                ticket: null,
+                error: 'Ticket code not found. Please verify and try again.'
+            });
+        }
+
         res.render('feedback/track-status', { ticket: rows[0], error: null });
     } catch (err) {
         console.error(err);
@@ -72,7 +120,6 @@ router.post('/track', async (req, res) => {
     }
 });
 
-// GET /feedback/details/:id - View single ticket details
 router.get('/details/:id', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM tickets WHERE id = ?', [req.params.id]);

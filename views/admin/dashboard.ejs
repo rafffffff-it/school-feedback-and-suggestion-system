@@ -6,24 +6,51 @@
     <title>Admin Dashboard - School Feedback System</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <div style="max-width: 1000px; margin: 30px auto; padding: 20px; font-family: Arial, sans-serif;">
-        <h2>Admin Dashboard - Ticket Management Queue</h2>
-        <p><a href="/">Back to Home</a></p>
-        <hr style="margin: 20px 0;">
+<body class="auth-page">
+    <div class="container" style="max-width: 1200px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+            <div>
+                <h2 style="margin:0;">Admin Dashboard</h2>
+                <p style="margin:8px 0 0; color:#475569;">Ticket management queue</p>
+            </div>
+            <div>
+                <a href="/" class="secondary-link">Back to Home</a>
+                <span class="divider">|</span>
+                <a href="/auth/logout" class="secondary-link">Log Out</a>
+            </div>
+        </div>
+
+        <div class="quick-stats" style="margin-top:20px; margin-bottom:25px;">
+            <div class="stat-card">
+                <strong><%= totalTickets || 0 %></strong>
+                <span>Total Tickets</span>
+            </div>
+            <div class="stat-card">
+                <strong><%= submittedCount || 0 %></strong>
+                <span>Submitted</span>
+            </div>
+            <div class="stat-card">
+                <strong><%= progressCount || 0 %></strong>
+                <span>In Review</span>
+            </div>
+            <div class="stat-card">
+                <strong><%= resolvedCount || 0 %></strong>
+                <span>Resolved</span>
+            </div>
+        </div>
 
         <% if (tickets.length === 0) { %>
-            <p>No feedback tickets found in the system yet.</p>
+            <div class="alert-success">No feedback tickets found in the system yet.</div>
         <% } else { %>
-            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: left;">
+            <table>
                 <thead>
-                    <tr style="background: #f4f4f4;">
+                    <tr>
                         <th>Tracking Code</th>
                         <th>Category / Title</th>
                         <th>Location</th>
                         <th>Submitter</th>
-                        <th>Current Status</th>
-                        <th>Action / Update</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,25 +58,24 @@
                         <tr>
                             <td><strong><%= ticket.tracking_code %></strong></td>
                             <td>
-                                <span style="font-size: 11px; background: #e9ecef; padding: 2px 6px;"><%= ticket.category %></span><br>
+                                <span class="status-pill" style="font-size:11px; background:#e2e8f0; color:#334155; margin-bottom:6px; display:inline-block;"><%= ticket.category %></span><br>
                                 <strong><%= ticket.title %></strong><br>
                                 <small><%= ticket.description %></small>
                             </td>
                             <td><%= ticket.location %></td>
                             <td><%= ticket.is_anonymous ? 'Anonymous' : 'Authenticated User' %></td>
-                            <td><strong style="color: #007bff;"><%= ticket.status %></strong></td>
+                            <td><span class="status-pill"><%= ticket.status %></span></td>
                             <td>
-                                <!-- Status Update Form -->
-                                <form action="/admin/ticket/<%= ticket.id %>/update" method="POST" style="margin-top: 5px;">
-                                    <select name="status" style="padding: 4px; margin-bottom: 5px; width: 100%;">
+                                <form action="/admin/ticket/<%= ticket.id %>/update" method="POST" style="min-width:200px;">
+                                    <select name="status" style="margin-bottom: 8px;">
                                         <option value="Submitted" <%= ticket.status === 'Submitted' ? 'selected' : '' %>>Submitted</option>
                                         <option value="Under Review" <%= ticket.status === 'Under Review' ? 'selected' : '' %>>Under Review</option>
                                         <option value="In Progress" <%= ticket.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
                                         <option value="Resolved" <%= ticket.status === 'Resolved' ? 'selected' : '' %>>Resolved</option>
                                         <option value="Closed" <%= ticket.status === 'Closed' ? 'selected' : '' %>>Closed</option>
                                     </select>
-                                    <input type="text" name="admin_remarks" placeholder="Add official remark..." value="<%= ticket.admin_remarks || '' %>" style="padding: 4px; width: 100%; margin-bottom: 5px; box-sizing: border-box;">
-                                    <button type="submit" style="background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; width: 100%;">Update Ticket</button>
+                                    <input type="text" name="admin_remarks" placeholder="Add official remark..." value="<%= ticket.admin_remarks || '' %>" style="margin-bottom: 8px;">
+                                    <button type="submit" class="btn btn-success" style="width:100%;">Update Ticket</button>
                                 </form>
                             </td>
                         </tr>

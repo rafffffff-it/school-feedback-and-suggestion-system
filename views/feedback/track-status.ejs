@@ -6,54 +6,48 @@
     <title>Track Suggestion Status</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <div style="max-width: 600px; margin: 40px auto; padding: 20px; font-family: Arial, sans-serif;">
-        <!-- Back Button Added Here -->
-        <p><a href="/" style="text-decoration: none; color: #007bff; font-weight: bold;">← Back to Home</a></p>
-
+<body class="auth-page">
+    <div class="auth-card" style="max-width: 700px;">
+        <p><a href="/" class="secondary-link">← Back to Home</a></p>
         <h2>Track Your Feedback Status</h2>
-        
-        <!-- Search Form -->
+
         <form action="/feedback/track" method="POST" style="margin-bottom: 20px;">
-            <div style="margin-bottom: 10px;">
-                <label>Enter Tracking Code:</label><br>
-                <input type="text" name="tracking_code" required placeholder="e.g., TCK-ABC123" style="width: 100%; padding: 8px; text-transform: uppercase;">
+            <div class="form-group">
+                <label>Enter Tracking Code</label>
+                <input type="text" name="tracking_code" required placeholder="e.g., TCK-ABC123" style="text-transform: uppercase;">
             </div>
-            <button type="submit" style="background: #28a745; color: white; padding: 8px 16px; border: none; cursor: pointer;">Track Status</button>
+            <button type="submit" class="btn btn-success">Track Status</button>
         </form>
 
-        <!-- Error Message Display -->
         <% if (error) { %>
-            <div style="background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
-                <%= error %>
-            </div>
+            <div class="alert-error"><%= error %></div>
         <% } %>
 
-        <!-- Ticket Details Display -->
         <% if (ticket) { %>
-            <div style="background: #f8f9fa; padding: 15px; border: 1px solid #ccc;">
+            <div class="card-panel">
                 <h3>Ticket Details</h3>
                 <p><strong>Tracking Code:</strong> <%= ticket.tracking_code %></p>
                 <p><strong>Category:</strong> <%= ticket.category %></p>
                 <p><strong>Title:</strong> <%= ticket.title %></p>
                 <p><strong>Location:</strong> <%= ticket.location %></p>
                 <p><strong>Description:</strong> <%= ticket.description %></p>
-                
+
                 <% if (ticket.attachment_path) { %>
                     <p><strong>Attachment:</strong> <a href="<%= ticket.attachment_path %>" target="_blank">View Uploaded Evidence</a></p>
                 <% } %>
 
-                <p><strong>Current Status:</strong> <span style="color: #007bff; font-weight: bold;"><%= ticket.status %></span></p>
+                <p><strong>Current Status:</strong> <span class="status-pill"><%= ticket.status %></span></p>
                 <p><strong>Last Updated:</strong> <%= ticket.updated_at %></p>
-                
+
                 <% if (ticket.admin_remarks) { %>
                     <p><strong>Official Remarks:</strong> <%= ticket.admin_remarks %></p>
                 <% } %>
             </div>
         <% } %>
 
-        <br>
-        <a href="/feedback/new">Submit a new feedback ticket</a>
+        <div class="auth-links">
+            <p><a href="/feedback/new">Submit a new feedback ticket</a></p>
+        </div>
     </div>
 </body>
 </html>

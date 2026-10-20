@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - EDUVoice</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+      <a class="dashboard-logo" href="/dashboard">EDUVoice</a>
+      <nav class="dashboard-nav" aria-label="Main navigation">
+        <a class="dashboard-nav-item active" href="/dashboard"><span aria-hidden="true">⌂</span>Dashboard</a>
+        <a class="dashboard-nav-item" href="/feedback/mine"><span aria-hidden="true">♧</span>My Feedback</a>
+        <a class="dashboard-nav-item" href="/feedback/new"><span aria-hidden="true">✎</span>Submit Suggestion</a>
+        <a class="dashboard-nav-item" href="#campus-announcements"><span aria-hidden="true">⚑</span>Campus Notices</a>
+        <a class="dashboard-nav-item" href="/auth/profile"><span aria-hidden="true">♙</span>Profile</a>
+        <a class="dashboard-nav-item" href="/auth/settings"><span aria-hidden="true">⚙</span>Settings</a>
+      </nav>
+      <a class="dashboard-nav-item dashboard-logout" href="/auth/logout"><span aria-hidden="true">⇥</span>Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <h1>Welcome back, <%= user.name.split(' ')[0] %>!</h1>
+        <div class="dashboard-header-actions">
+          <a class="notification-button" href="#campus-announcements" aria-label="View campus announcements" title="View announcements">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg><i></i>
+          </a>
+          <a class="profile-avatar" href="/auth/profile" aria-label="View your profile" title="View profile">
+            <%= user.name.charAt(0).toUpperCase() %>
+          </a>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <div class="dashboard-primary-column">
+          <section class="dashboard-card overview-card" aria-labelledby="overview-title">
+            <h2 id="overview-title">Quick Overview</h2>
+            <div class="overview-metrics">
+              <div class="overview-metric overview-total">
+                <span class="metric-icon" aria-hidden="true">▤</span>
+                <div><span>Feedback Submitted</span><strong><%= stats.total %> Total</strong></div>
+              </div>
+              <div class="overview-metric">
+                <div><span>In Progress</span><strong><%= stats.inProgress %> Active</strong></div>
+              </div>
+              <div class="overview-metric">
+                <div><span>Resolved</span><strong><%= stats.resolved %> Completed</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="dashboard-card submissions-card" id="recent-submissions" aria-labelledby="submissions-title">
+            <h2 id="submissions-title">Recent Submissions</h2>
+            <% if (tickets.length === 0) { %>
+              <p class="dashboard-empty-state">No feedback submitted yet. <a href="/feedback/new">Submit your first suggestion</a>.</p>
+            <% } else { %>
+              <div class="dashboard-table-wrap">
+                <table class="dashboard-table">
+                  <thead>
+                    <tr><th>Date</th><th>Category</th><th>Title</th><th>Status</th></tr>
+                  </thead>
+                  <tbody>
+                    <% tickets.slice(0, 8).forEach(ticket => { %>
+                      <tr>
+                        <td><%= new Date(ticket.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
+                        <td><%= ticket.category %></td>
+                        <td><a href="/feedback/details/<%= ticket.id %>"><%= ticket.title %></a></td>
+                        <td><span class="dashboard-status <%= ['Resolved', 'Closed'].includes(ticket.status) ? 'resolved' : ['Under Review', 'In Progress'].includes(ticket.status) ? 'in-progress' : 'pending' %>"><%= ticket.status %></span></td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <% if (tickets.length > 8) { %>
+                <a class="all-feedback-link" href="/feedback/mine">View all feedback</a>
+              <% } %>
+            <% } %>
+          </section>
+        </div>
+
+        <aside class="dashboard-side-column">
+          <section class="dashboard-card announcements-card" id="campus-announcements" aria-labelledby="announcements-title">
+            <h2 id="announcements-title">Campus Announcements</h2>
+            <ul class="dashboard-announcements">
+              <li><span class="announcement-accent terracotta"></span><div><p>Scheduled IT maintenance on Saturday</p><time datetime="2026-10-16">Oct 16, 2026</time></div></li>
+              <li><span class="announcement-accent green"></span><div><p>New library hours starting next week</p><time datetime="2026-10-16">Oct 16, 2026</time></div></li>
+              <li><span class="announcement-accent terracotta"></span><div><p>New library hours updates</p><time datetime="2026-10-16">Oct 16, 2026</time></div></li>
+              <li><span class="announcement-accent green"></span><div><p>Campus feedback portal is open</p><time datetime="2026-10-16">Oct 16, 2026</time></div></li>
+            </ul>
+          </section>
+
+          <section class="dashboard-card quick-actions-card" aria-labelledby="quick-actions-title">
+            <h2 id="quick-actions-title">Quick Actions</h2>
+            <a class="dashboard-action primary" href="/feedback/new"><span aria-hidden="true">＋</span> Submit New Feedback</a>
+            <a class="dashboard-action secondary" href="/feedback/faq">View FAQs</a>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

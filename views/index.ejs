@@ -6,27 +6,34 @@
     <title>School Feedback & Suggestion System</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <div style="max-width: 600px; margin: 60px auto; padding: 20px; font-family: Arial, sans-serif; text-align: center;">
-        <h1>Campus Feedback & Suggestion System</h1>
-        <p>A secure digital channel to submit suggestions, report campus facility issues, and track progress.</p>
-        
-        <div style="margin-top: 30px;">
-            <a href="/feedback/new" style="background: #007BFF; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin-right: 10px; display: inline-block;">Submit New Feedback</a>
-            <a href="/feedback/track" style="background: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Track Ticket Status</a>
-        </div>
+<body class="dashboard-body" style="overflow: hidden;">
+    <div class="simple-page" style="max-width: 800px; margin-top: 20px;">
+        <div class="simple-card" style="text-align: center; padding: 30px;">
+            <p style="color: #a46549; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.08em; margin-bottom: 6px;">Campus Services Portal</p>
+            <h1 style="color: #234b37; font-family: Georgia, serif; font-size: 2.2rem; margin-bottom: 12px;">Campus Feedback & Suggestion System</h1>
+            <p style="color: #676a64; font-size: 1rem; line-height: 1.4; margin-bottom: 22px;">A secure digital channel to report issues, submit improvement ideas, and monitor the status of requests across the campus.</p>
 
-        <!-- Added Admin / Login Portal Link -->
-        <div style="margin-top: 40px; border-top: 1px solid #eaeaea; padding-top: 20px;">
-            <% if (typeof session !== 'undefined' && session.user) { %>
-                <p style="font-size: 14px; color: #555;">Logged in as <strong><%= session.user.name %></strong> (<%= session.user.role %>)</p>
-                <% if (session.user.role === 'admin') { %>
-                    <a href="/admin/dashboard" style="color: #007BFF; text-decoration: none; font-weight: bold; margin-right: 15px;">Go to Admin Dashboard</a>
+            <!-- Stacked Action Buttons -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 22px;">
+                <a class="dashboard-action primary" href="/feedback/new" style="width: 100%; max-width: 320px; padding: 10px 20px;">Submit New Feedback</a>
+                <a class="dashboard-action secondary" href="/feedback/track" style="width: 100%; max-width: 320px; padding: 10px 20px;">Track Ticket Status</a>
+            </div>
+
+            <div style="border-top: 1px solid #e3e1dc; padding-top: 18px; margin-top: 18px;">
+                <% if (session && session.user) { %>
+                    <p style="margin-bottom: 12px;">Logged in as <strong><%= session.user.name %></strong> (<%= session.user.role %>)</p>
+                    <% if (session.user.role === 'admin') { %>
+                        <a href="/admin/dashboard" class="simple-back-link">Go to Admin Dashboard</a>
+                    <% } else { %>
+                        <a href="/dashboard" class="simple-back-link">My Dashboard</a> | 
+                        <a href="/auth/profile" class="simple-back-link">My Profile</a>
+                    <% } %>
+                    | <a href="/auth/logout" class="simple-back-link" style="color: #a46549;">Log Out</a>
+                <% } else { %>
+                    <a href="/auth/login" class="simple-back-link">Login</a> | 
+                    <a href="/auth/register" class="simple-back-link">Create Account</a>
                 <% } %>
-                <a href="/auth/logout" style="color: #dc3545; text-decoration: none; font-size: 14px;">Log Out</a>
-            <% } else { %>
-                <a href="/auth/login" style="color: #6c757d; text-decoration: none; font-size: 14px;">Administrator / Staff Login</a>
-            <% } %>
+            </div>
         </div>
     </div>
 </body>
