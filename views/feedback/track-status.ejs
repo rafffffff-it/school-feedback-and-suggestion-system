@@ -1,53 +1,77 @@
-<!DOCTYPE html>
+<%
+  const statusClass = ticket
+    ? (['Resolved', 'Closed'].includes(ticket.status)
+        ? 'resolved'
+        : ['Under Review', 'In Progress'].includes(ticket.status) ? 'in-progress' : 'pending')
+    : '';
+  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+%><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Suggestion Status</title>
+    <title>Track Feedback - EDUVoice</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="auth-page">
-    <div class="auth-card" style="max-width: 700px;">
-        <p><a href="/" class="secondary-link">← Back to Home</a></p>
-        <h2>Track Your Feedback Status</h2>
+<body class="dashboard-body">
+    <main class="simple-page">
+        <a class="simple-back-link" href="/">← Back to home</a>
 
-        <form action="/feedback/track" method="POST" style="margin-bottom: 20px;">
-            <div class="form-group">
-                <label>Enter Tracking Code</label>
-                <input type="text" name="tracking_code" required placeholder="e.g., TCK-ABC123" style="text-transform: uppercase;">
-            </div>
-            <button type="submit" class="btn btn-success">Track Status</button>
-        </form>
+        <section class="simple-card">
+            <h1>Track your feedback</h1>
+            <p>Enter the tracking code you received when you submitted your feedback.</p>
 
-        <% if (error) { %>
-            <div class="alert-error"><%= error %></div>
-        <% } %>
+            <% if (error) { %>
+                <div class="alert-error"><%= error %></div>
+            <% } %>
+
+            <form action="/feedback/track" method="POST">
+                <label for="tracking_code">Tracking code</label>
+                <input id="tracking_code" type="text" name="tracking_code" required maxlength="50" placeholder="TCK-ABC123" autocomplete="off" style="text-transform: uppercase;">
+                <button class="dashboard-action primary" type="submit">Track status</button>
+            </form>
+        </section>
 
         <% if (ticket) { %>
-            <div class="card-panel">
-                <h3>Ticket Details</h3>
-                <p><strong>Tracking Code:</strong> <%= ticket.tracking_code %></p>
-                <p><strong>Category:</strong> <%= ticket.category %></p>
-                <p><strong>Title:</strong> <%= ticket.title %></p>
-                <p><strong>Location:</strong> <%= ticket.location %></p>
-                <p><strong>Description:</strong> <%= ticket.description %></p>
+            <section class="simple-card" style="margin-top: 20px;">
+                <h2><%= ticket.title %></h2>
+                <p>Tracking code <strong><%= ticket.tracking_code %></strong></p>
+
+                <div class="profile-details">
+                    <div class="profile-detail">
+                        <span>Current status</span>
+                        <strong><span class="dashboard-status <%= statusClass %>"><%= ticket.status %></span></strong>
+                    </div>
+                    <div class="profile-detail">
+                        <span>Category</span>
+                        <strong><%= ticket.category %></strong>
+                    </div>
+                    <div class="profile-detail">
+                        <span>Location</span>
+                        <strong><%= ticket.location %></strong>
+                    </div>
+                    <div class="profile-detail">
+                        <span>Last updated</span>
+                        <strong><%= new Date(ticket.updated_at).toLocaleString('en-US', dateOptions) %></strong>
+                    </div>
+                </div>
+
+                <h3>Description</h3>
+                <p style="white-space: pre-line;"><%= ticket.description %></p>
 
                 <% if (ticket.attachment_path) { %>
-                    <p><strong>Attachment:</strong> <a href="<%= ticket.attachment_path %>" target="_blank">View Uploaded Evidence</a></p>
+                    <h3>Attachment</h3>
+                    <p><a href="<%= ticket.attachment_path %>" target="_blank" rel="noopener">Open uploaded file</a></p>
                 <% } %>
-
-                <p><strong>Current Status:</strong> <span class="status-pill"><%= ticket.status %></span></p>
-                <p><strong>Last Updated:</strong> <%= ticket.updated_at %></p>
 
                 <% if (ticket.admin_remarks) { %>
-                    <p><strong>Official Remarks:</strong> <%= ticket.admin_remarks %></p>
+                    <h3>Administrator remarks</h3>
+                    <p><%= ticket.admin_remarks %></p>
                 <% } %>
-            </div>
+            </section>
         <% } %>
 
-        <div class="auth-links">
-            <p><a href="/feedback/new">Submit a new feedback ticket</a></p>
-        </div>
-    </div>
+        <p style="margin-top: 20px;"><a class="simple-secondary-link" href="/feedback/new">Submit a new feedback ticket</a></p>
+    </main>
 </body>
 </html>
