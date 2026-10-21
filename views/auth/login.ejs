@@ -11,18 +11,16 @@
     <div class="brand-panel">
       <div class="brand-content">
         <div class="edu-logo">EDUVoice</div>
-        <div class="brand-tag">description</div>
+        <div class="brand-tag">Campus Feedback Portal</div>
         <div class="brand-copy">
-          Connecting students, teachers, and<br>
-          administration for a better school<br>
-          community
+          Connecting students, teachers, and administration for a better school community
         </div>
       </div>
     </div>
 
     <div class="auth-panel">
       <div class="auth-card">
-        <h1>School Feedback and<br>Suggestion System</h1>
+        <h1>School Feedback and Suggestion System</h1>
         <h2>Welcome back !!!</h2>
 
         <% if (error) { %>
@@ -34,16 +32,16 @@
         <% } %>
 
         <form method="POST" action="/auth/login">
-          <label class="form-label" for="email">Username</label>
+          <label class="form-label" for="email">Email</label>
           <div class="field-wrap">
             <span class="field-icon">◌</span>
-            <input id="email" type="email" name="email" placeholder="Enter your username" required>
+            <input id="email" type="email" name="email" placeholder="Enter your campus email" required maxlength="100" autocomplete="email">
           </div>
 
           <label class="form-label" for="password">Password</label>
           <div class="field-wrap">
             <span class="field-icon">◒</span>
-            <input id="password" type="password" name="password" placeholder="••••••••" required>
+            <input id="password" type="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
           </div>
 
           <button class="primary-btn" type="submit">Login</button>
