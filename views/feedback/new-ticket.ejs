@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Record - EDUVoice</title>
+    <title>Submit Feedback - EDUVoice</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="dashboard-body">
@@ -23,33 +23,26 @@
 
         <main class="record-main">
             <header class="record-header">
-                <h1>Add New Record</h1>
+                <h1>Submit Feedback</h1>
                 <span><%= session && session.user ? (session.user.role === 'admin' ? 'Campus Administrator' : session.user.name) : 'Campus Community' %></span>
             </header>
 
             <section class="record-card">
                 <div class="record-card-heading">
-                    <h2>Add Feedback/Suggestion Record</h2>
-                    <p>Enter the details below to create a new campus record</p>
+                    <h2>Share your feedback or suggestion</h2>
+                    <p>Tell the campus team what needs attention. You will get a tracking code after you submit.</p>
                 </div>
 
                 <% if (error) { %>
                     <div class="alert-error"><%= error %></div>
                 <% } %>
 
-                <% if (successMessage) { %>
-                    <div class="alert-success feedback-success">
-                        <strong>Record submitted successfully</strong>
-                        <span><%= successMessage %></span>
-                        <a href="/feedback/mine">View feedback records</a>
-                    </div>
-                <% } %>
-
                 <form action="/feedback/new" method="POST" enctype="multipart/form-data" class="record-form">
                     <div class="record-form-grid">
                         <div class="record-field">
-                            <label for="title">Record Title</label>
-                            <input id="title" type="text" name="title" required minlength="5" maxlength="255" value="<%= formData ? formData.title || '' : '' %>" placeholder="Enter a concise title for the feedback">
+                            <label for="title">Title</label>
+                            <input id="title" type="text" name="title" required minlength="5" maxlength="150" value="<%= formData ? formData.title || '' : '' %>" placeholder="Short summary, e.g. Broken projector in CS Lab">
+                            <small>5 to 150 characters.</small>
                         </div>
 
                         <div class="record-field">
@@ -66,7 +59,8 @@
 
                         <div class="record-field">
                             <label for="location">Location / Room</label>
-                            <input id="location" type="text" name="location" required maxlength="255" value="<%= formData ? formData.location || '' : '' %>" placeholder="Building, room, or campus area">
+                            <input id="location" type="text" name="location" required maxlength="100" value="<%= formData ? formData.location || '' : '' %>" placeholder="Building, room, or campus area">
+                            <small>Up to 100 characters.</small>
                         </div>
 
                         <div class="record-field record-privacy-field">
@@ -75,32 +69,60 @@
                                 <input type="checkbox" name="is_anonymous" id="is_anonymous" <%= formData && formData.is_anonymous === 'on' ? 'checked' : '' %>>
                                 <span>Submit anonymously</span>
                             </label>
-                            <small>Your account is associated with the record unless you choose anonymous submission.</small>
+                            <small>Your account is linked to the ticket unless you choose anonymous submission.</small>
                         </div>
 
                         <div class="record-field record-full-width">
                             <label for="description">Description</label>
-                            <textarea id="description" name="description" rows="4" required minlength="10" placeholder="Provide detailed description of the feedback or suggestion..."><%= formData ? formData.description || '' : '' %></textarea>
+                            <textarea id="description" name="description" rows="4" required minlength="10" placeholder="Describe what happened and what you would like the campus team to do (at least 10 characters)."><%= formData ? formData.description || '' : '' %></textarea>
                         </div>
 
                         <div class="record-field record-full-width">
-                            <label for="attachment">Attachments <span>(Optional)</span></label>
+                            <label for="attachment">Attachment <span>(optional)</span></label>
                             <label class="record-file-picker" for="attachment">
                                 <span aria-hidden="true">⌁</span>
-                                <span class="record-file-label">Upload File (PDF, PNG, JPG)</span>
+                                <span class="record-file-label" id="file-label">Upload a file (PDF, PNG, JPG, GIF)</span>
                                 <input id="attachment" type="file" name="attachment" accept=".jpg,.jpeg,.png,.gif,.pdf">
                             </label>
-                            <small>Maximum file size: 10 MB.</small>
+                            <small id="file-hint">Maximum file size: 10 MB.</small>
                         </div>
                     </div>
 
                     <div class="record-form-actions">
                         <a href="/dashboard" class="record-cancel">Cancel</a>
-                        <button type="submit" class="record-submit">Submit Record</button>
+                        <button type="submit" class="record-submit">Submit Feedback</button>
                     </div>
                 </form>
             </section>
         </main>
     </div>
+
+    <script>
+        // Tell the user about an oversized file before the upload starts.
+        // The server (uploadMiddleware.js) still enforces the 10 MB limit.
+        (function () {
+            var input = document.getElementById('attachment');
+            var label = document.getElementById('file-label');
+            var hint = document.getElementById('file-hint');
+            var maxBytes = 10 * 1024 * 1024;
+
+            input.addEventListener('change', function () {
+                var file = input.files[0];
+                if (!file) {
+                    label.textContent = 'Upload a file (PDF, PNG, JPG, GIF)';
+                    hint.textContent = 'Maximum file size: 10 MB.';
+                    return;
+                }
+                if (file.size > maxBytes) {
+                    input.value = '';
+                    label.textContent = 'Upload a file (PDF, PNG, JPG, GIF)';
+                    hint.textContent = 'That file is larger than 10 MB. Please choose a smaller one.';
+                    return;
+                }
+                label.textContent = file.name;
+                hint.textContent = 'Maximum file size: 10 MB.';
+            });
+        })();
+    </script>
 </body>
 </html>
