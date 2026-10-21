@@ -1,35 +1,71 @@
-<!DOCTYPE html>
+<%
+  const currentUser = session && session.user ? session.user : null;
+  const backHref = currentUser ? (currentUser.role === 'admin' ? '/admin/dashboard' : '/dashboard') : '/';
+  const backLabel = currentUser ? (currentUser.role === 'admin' ? 'Back to admin dashboard' : 'Back to dashboard') : 'Back to home';
+  const statusClass = ['Resolved', 'Closed'].includes(ticket.status)
+    ? 'resolved'
+    : ['Under Review', 'In Progress'].includes(ticket.status) ? 'in-progress' : 'pending';
+  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+%><!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Details - <%= ticket.tracking_code %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticket <%= ticket.tracking_code %> - EDUVoice</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body style="font-family: Arial, sans-serif; padding: 40px; max-width: 700px; margin: 0 auto;">
-    <h2>Ticket Details</h2>
-    <a href="/admin/dashboard">← Back to Dashboard</a> | <a href="/feedback/track">Track another ticket</a>
-    <hr>
+<body class="dashboard-body">
+  <main class="simple-page">
+    <a class="simple-back-link" href="<%= backHref %>">← <%= backLabel %></a>
 
-    <div style="background: #f9f9f9; padding: 20px; border: 1px solid #ddd; margin-top: 20px;">
-        <h3>[<%= ticket.tracking_code %>] <%= ticket.title %></h3>
-        <p><strong>Status:</strong> <span style="color: blue;"><%= ticket.status %></span></p>
-        <p><strong>Category:</strong> <%= ticket.category %></p>
-        <p><strong>Location:</strong> <%= ticket.location %></p>
-        <p><strong>Submission Type:</strong> <%= ticket.is_anonymous ? 'Anonymous' : 'Verified User' %></p>
-        <p><strong>Date Submitted:</strong> <%= ticket.created_at %></p>
-        
-        <h4>Description:</h4>
-        <p style="white-space: pre-line;"><%= ticket.description %></p>
+    <section class="simple-card">
+      <h1><%= ticket.title %></h1>
+      <p>Tracking code <strong><%= ticket.tracking_code %></strong></p>
 
-        <% if (ticket.attachment_path) { %>
-            <h4>Attachment / Evidence:</h4>
-            <a href="<%= ticket.attachment_path %>" target="_blank" style="color: #007bff;">View Uploaded File / Evidence</a>
-        <% } %>
+      <div class="profile-details">
+        <div class="profile-detail">
+          <span>Status</span>
+          <strong><span class="dashboard-status <%= statusClass %>"><%= ticket.status %></span></strong>
+        </div>
+        <div class="profile-detail">
+          <span>Category</span>
+          <strong><%= ticket.category %></strong>
+        </div>
+        <div class="profile-detail">
+          <span>Location</span>
+          <strong><%= ticket.location %></strong>
+        </div>
+        <div class="profile-detail">
+          <span>Submitted as</span>
+          <strong><%= ticket.is_anonymous ? 'Anonymous' : 'Verified user' %></strong>
+        </div>
+        <div class="profile-detail">
+          <span>Date submitted</span>
+          <strong><%= new Date(ticket.created_at).toLocaleString('en-US', dateOptions) %></strong>
+        </div>
+        <div class="profile-detail">
+          <span>Last updated</span>
+          <strong><%= new Date(ticket.updated_at).toLocaleString('en-US', dateOptions) %></strong>
+        </div>
+      </div>
 
-        <% if (ticket.admin_remarks) { %>
-            <h4>Official Administrative Remarks:</h4>
-            <p style="background: #e9ecef; padding: 10px; border-left: 4px solid #007bff;"><%= ticket.admin_remarks %></p>
-        <% } %>
-    </div>
+      <h2>Description</h2>
+      <p style="white-space: pre-line;"><%= ticket.description %></p>
+
+      <% if (ticket.attachment_path) { %>
+        <h2>Attachment</h2>
+        <p><a href="<%= ticket.attachment_path %>" target="_blank" rel="noopener">Open uploaded file</a></p>
+      <% } %>
+
+      <% if (ticket.admin_remarks) { %>
+        <h2>Administrator remarks</h2>
+        <p><%= ticket.admin_remarks %></p>
+      <% } %>
+
+      <div class="profile-actions">
+        <a class="dashboard-action secondary" href="/feedback/track">Track another ticket</a>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
