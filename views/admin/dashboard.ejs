@@ -31,17 +31,36 @@
             </div>
             <div class="stat-card">
                 <strong><%= progressCount || 0 %></strong>
-                <span>In Review</span>
+                <span>Under Review / In Progress</span>
             </div>
             <div class="stat-card">
                 <strong><%= resolvedCount || 0 %></strong>
-                <span>Resolved</span>
+                <span>Resolved / Closed</span>
             </div>
         </div>
 
         <% if (tickets.length === 0) { %>
             <div class="alert-success">No feedback tickets found in the system yet.</div>
         <% } else { %>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                <div style="flex:2; min-width:220px;">
+                    <label for="ticket-search">Search tickets</label>
+                    <input type="text" id="ticket-search" placeholder="Tracking code, title, location, or description">
+                </div>
+                <div style="flex:1; min-width:160px;">
+                    <label for="status-filter">Status</label>
+                    <select id="status-filter">
+                        <option value="">All statuses</option>
+                        <option value="Submitted">Submitted</option>
+                        <option value="Under Review">Under Review</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+            </div>
+            <p id="filter-count" style="color:#475569; margin:0 0 5px;" aria-live="polite"></p>
+
             <table>
                 <thead>
                     <tr>
@@ -53,36 +72,78 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="ticket-rows">
                     <% tickets.forEach(ticket => { %>
-                        <tr>
+                        <tr class="ticket-row"
+                            data-status="<%= ticket.status %>"
+                            data-search="<%= [ticket.tracking_code, ticket.title, ticket.location, ticket.description].join(' ').toLowerCase() %>">
                             <td><strong><%= ticket.tracking_code %></strong></td>
                             <td>
                                 <span class="status-pill" style="font-size:11px; background:#e2e8f0; color:#334155; margin-bottom:6px; display:inline-block;"><%= ticket.category %></span><br>
-                                <strong><%= ticket.title %></strong><br>
-                                <small><%= ticket.description %></small>
+                                <a href="/feedback/details/<%= ticket.id %>"><strong><%= ticket.title %></strong></a><br>
+                                <small><%= ticket.description.length > 120 ? ticket.description.slice(0, 120) + '…' : ticket.description %></small>
+                                <% if (ticket.attachment_path) { %>
+                                    <br><small><a href="<%= ticket.attachment_path %>" target="_blank" rel="noopener">View attachment</a></small>
+                                <% } %>
                             </td>
                             <td><%= ticket.location %></td>
-                            <td><%= ticket.is_anonymous ? 'Anonymous' : 'Authenticated User' %></td>
+                            <td><%= ticket.is_anonymous ? 'Anonymous' : (ticket.user_id ? 'Registered user' : 'Guest') %></td>
                             <td><span class="status-pill"><%= ticket.status %></span></td>
                             <td>
                                 <form action="/admin/ticket/<%= ticket.id %>/update" method="POST" style="min-width:200px;">
-                                    <select name="status" style="margin-bottom: 8px;">
-                                        <option value="Submitted" <%= ticket.status === 'Submitted' ? 'selected' : '' %>>Submitted</option>
-                                        <option value="Under Review" <%= ticket.status === 'Under Review' ? 'selected' : '' %>>Under Review</option>
-                                        <option value="In Progress" <%= ticket.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
-                                        <option value="Resolved" <%= ticket.status === 'Resolved' ? 'selected' : '' %>>Resolved</option>
-                                        <option value="Closed" <%= ticket.status === 'Closed' ? 'selected' : '' %>>Closed</option>
+                                    <label for="status-<%= ticket.id %>" style="display:none;">Status for <%= ticket.tracking_code %></label>
+                                    <select id="status-<%= ticket.id %>" name="status" style="margin-bottom: 8px;">
+                                        <% ['Submitted', 'Under Review', 'In Progress', 'Resolved', 'Closed'].forEach(status => { %>
+                                            <option value="<%= status %>" <%= ticket.status === status ? 'selected' : '' %>><%= status %></option>
+                                        <% }) %>
                                     </select>
-                                    <input type="text" name="admin_remarks" placeholder="Add official remark..." value="<%= ticket.admin_remarks || '' %>" style="margin-bottom: 8px;">
+                                    <label for="remarks-<%= ticket.id %>" style="display:none;">Remarks for <%= ticket.tracking_code %></label>
+                                    <input type="text" id="remarks-<%= ticket.id %>" name="admin_remarks" placeholder="Add official remark..." maxlength="500" value="<%= ticket.admin_remarks || '' %>" style="margin-bottom: 8px;">
                                     <button type="submit" class="btn btn-success" style="width:100%;">Update Ticket</button>
                                 </form>
                             </td>
                         </tr>
                     <% }) %>
+                    <tr id="no-results" style="display:none;">
+                        <td colspan="6">No tickets match your search.</td>
+                    </tr>
                 </tbody>
             </table>
         <% } %>
     </div>
+
+    <script>
+        // Filters the rows already on the page. No extra database query is made.
+        (function () {
+            var search = document.getElementById('ticket-search');
+            var statusFilter = document.getElementById('status-filter');
+            if (!search || !statusFilter) { return; }
+
+            var rows = Array.prototype.slice.call(document.querySelectorAll('.ticket-row'));
+            var noResults = document.getElementById('no-results');
+            var count = document.getElementById('filter-count');
+
+            function applyFilters() {
+                var text = search.value.trim().toLowerCase();
+                var status = statusFilter.value;
+                var visible = 0;
+
+                rows.forEach(function (row) {
+                    var matchesText = !text || row.getAttribute('data-search').indexOf(text) !== -1;
+                    var matchesStatus = !status || row.getAttribute('data-status') === status;
+                    var show = matchesText && matchesStatus;
+                    row.style.display = show ? '' : 'none';
+                    if (show) { visible++; }
+                });
+
+                noResults.style.display = visible === 0 ? '' : 'none';
+                count.textContent = 'Showing ' + visible + ' of ' + rows.length + ' tickets';
+            }
+
+            search.addEventListener('input', applyFilters);
+            statusFilter.addEventListener('change', applyFilters);
+            applyFilters();
+        })();
+    </script>
 </body>
 </html>
