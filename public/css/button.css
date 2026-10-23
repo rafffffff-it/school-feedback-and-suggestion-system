@@ -22,6 +22,17 @@
     cursor: pointer;
 }
 
+.nav-btn-primary {
+    background-color: #0d4d3e;
+    color: #ffffff;
+    border: 1px solid #0d4d3e;
+}
+
+.nav-btn-primary:hover {
+    background-color: #09382d;
+    border-color: #09382d;
+}
+
 .nav-btn-secondary {
     background-color: #ffffff;
     color: #334155;
