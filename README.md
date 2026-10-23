@@ -5,4 +5,6 @@ Commands
 npm install express ejs mysql2 express-session bcrypt dotenv
 npm install multer
 
+This is the very first version of our project. I, Rafael Bricenio, started this, and have used
+just Google Gemini for this.
 
