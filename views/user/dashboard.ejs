@@ -18,6 +18,16 @@
         <a class="dashboard-nav-item" href="/auth/profile"><span aria-hidden="true">♙</span>Profile</a>
         <a class="dashboard-nav-item" href="/auth/settings"><span aria-hidden="true">⚙</span>Settings</a>
       </nav>
+
+      <!-- Conditionally render Admin Dashboard option if user role is admin -->
+      <% if (user && user.role === 'admin') { %>
+        <div style="padding: 0 16px; margin-bottom: 10px;">
+          <a class="dashboard-nav-item" href="/admin/dashboard" style="background-color: rgba(13, 77, 62, 0.1); color: #0d4d3e; font-weight: 600;">
+            <span aria-hidden="true">🛡</span> Admin Dashboard
+          </a>
+        </div>
+      <% } %>
+
       <a class="dashboard-nav-item dashboard-logout" href="/auth/logout"><span aria-hidden="true">⇥</span>Logout</a>
     </aside>
 

@@ -8,7 +8,7 @@ function isAdmin(req, res, next) {
     }
 
     res.status(403).render('auth/login', {
-        error: 'Access Denied: Administrator privileges required.',
+        error: 'YOU ARE NOT ALLOWED TO ACCESS THIS PAGE!',
         successMessage: null
     });
 }

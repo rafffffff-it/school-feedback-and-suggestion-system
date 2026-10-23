@@ -5,18 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - School Feedback System</title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Dashboard-specific readability overrides */
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
 </head>
-<body class="auth-page">
-    <div class="container" style="max-width: 1200px;">
+<body>
+    <div class="dashboard-container">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
             <div>
-                <h2 style="margin:0;">Admin Dashboard</h2>
+                <h2 style="margin:0; color:#0f172a;">Admin Dashboard</h2>
                 <p style="margin:8px 0 0; color:#475569;">Ticket management queue</p>
             </div>
             <div>
                 <a href="/" class="secondary-link">Back to Home</a>
-                <span class="divider">|</span>
-                <a href="/auth/logout" class="secondary-link">Log Out</a>
+                <span class="divider" style="margin: 0 8px; color: #cbd5e1;">|</span>
+                <a href="/auth/logout" class="secondary-link" style="color: #dc2626;">Log Out</a>
             </div>
         </div>
 
@@ -40,16 +55,16 @@
         </div>
 
         <% if (tickets.length === 0) { %>
-            <div class="alert-success">No feedback tickets found in the system yet.</div>
+            <div class="alert-success" style="background: #e2e8f0; color: #334155; padding: 15px; border-radius: 6px;">No feedback tickets found in the system yet.</div>
         <% } else { %>
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+            <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:15px; align-items: flex-end;">
                 <div style="flex:2; min-width:220px;">
-                    <label for="ticket-search">Search tickets</label>
-                    <input type="text" id="ticket-search" placeholder="Tracking code, title, location, or description">
+                    <label for="ticket-search" style="display: block; margin-bottom: 5px; font-weight: 500; color: #334155;">Search tickets</label>
+                    <input type="text" id="ticket-search" placeholder="Tracking code, title, location, or description" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
                 </div>
                 <div style="flex:1; min-width:160px;">
-                    <label for="status-filter">Status</label>
-                    <select id="status-filter">
+                    <label for="status-filter" style="display: block; margin-bottom: 5px; font-weight: 500; color: #334155;">Status</label>
+                    <select id="status-filter" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
                         <option value="">All statuses</option>
                         <option value="Submitted">Submitted</option>
                         <option value="Under Review">Under Review</option>
@@ -59,61 +74,63 @@
                     </select>
                 </div>
             </div>
-            <p id="filter-count" style="color:#475569; margin:0 0 5px;" aria-live="polite"></p>
+            <p id="filter-count" style="color:#475569; margin:0 0 15px; font-size: 0.9rem;" aria-live="polite"></p>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tracking Code</th>
-                        <th>Category / Title</th>
-                        <th>Location</th>
-                        <th>Submitter</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="ticket-rows">
-                    <% tickets.forEach(ticket => { %>
-                        <tr class="ticket-row"
-                            data-status="<%= ticket.status %>"
-                            data-search="<%= [ticket.tracking_code, ticket.title, ticket.location, ticket.description].join(' ').toLowerCase() %>">
-                            <td><strong><%= ticket.tracking_code %></strong></td>
-                            <td>
-                                <span class="status-pill" style="font-size:11px; background:#e2e8f0; color:#334155; margin-bottom:6px; display:inline-block;"><%= ticket.category %></span><br>
-                                <a href="/feedback/details/<%= ticket.id %>"><strong><%= ticket.title %></strong></a><br>
-                                <small><%= ticket.description.length > 120 ? ticket.description.slice(0, 120) + '…' : ticket.description %></small>
-                                <% if (ticket.attachment_path) { %>
-                                    <br><small><a href="<%= ticket.attachment_path %>" target="_blank" rel="noopener">View attachment</a></small>
-                                <% } %>
-                            </td>
-                            <td><%= ticket.location %></td>
-                            <td><%= ticket.is_anonymous ? 'Anonymous' : (ticket.user_id ? 'Registered user' : 'Guest') %></td>
-                            <td><span class="status-pill"><%= ticket.status %></span></td>
-                            <td>
-                                <form action="/admin/ticket/<%= ticket.id %>/update" method="POST" style="min-width:200px;">
-                                    <label for="status-<%= ticket.id %>" style="display:none;">Status for <%= ticket.tracking_code %></label>
-                                    <select id="status-<%= ticket.id %>" name="status" style="margin-bottom: 8px;">
-                                        <% ['Submitted', 'Under Review', 'In Progress', 'Resolved', 'Closed'].forEach(status => { %>
-                                            <option value="<%= status %>" <%= ticket.status === status ? 'selected' : '' %>><%= status %></option>
-                                        <% }) %>
-                                    </select>
-                                    <label for="remarks-<%= ticket.id %>" style="display:none;">Remarks for <%= ticket.tracking_code %></label>
-                                    <input type="text" id="remarks-<%= ticket.id %>" name="admin_remarks" placeholder="Add official remark..." maxlength="500" value="<%= ticket.admin_remarks || '' %>" style="margin-bottom: 8px;">
-                                    <button type="submit" class="btn btn-success" style="width:100%;">Update Ticket</button>
-                                </form>
-                            </td>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #e2e8f0; color: #475569;">
+                            <th style="padding: 10px;">Tracking Code</th>
+                            <th style="padding: 10px;">Category / Title</th>
+                            <th style="padding: 10px;">Location</th>
+                            <th style="padding: 10px;">Submitter</th>
+                            <th style="padding: 10px;">Status</th>
+                            <th style="padding: 10px;">Action</th>
                         </tr>
-                    <% }) %>
-                    <tr id="no-results" style="display:none;">
-                        <td colspan="6">No tickets match your search.</td>
-                    </tr>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody id="ticket-rows">
+                        <% tickets.forEach(ticket => { %>
+                            <tr class="ticket-row"
+                                data-status="<%= ticket.status %>"
+                                data-search="<%= [ticket.tracking_code, ticket.title, ticket.location, ticket.description].join(' ').toLowerCase() %>"
+                                style="border-bottom: 1px solid #f1f5f9;">
+                                <td style="padding: 12px 10px;"><strong><%= ticket.tracking_code %></strong></td>
+                                <td style="padding: 12px 10px;">
+                                    <span class="status-pill" style="font-size:11px; background:#e2e8f0; color:#334155; padding: 2px 8px; border-radius: 4px; margin-bottom:6px; display:inline-block;"><%= ticket.category %></span><br>
+                                    <a href="/feedback/details/<%= ticket.id %>" style="color: #0d4d3e; text-decoration: none;"><strong><%= ticket.title %></strong></a><br>
+                                    <small style="color: #64748b;"><%= ticket.description.length > 120 ? ticket.description.slice(0, 120) + '…' : ticket.description %></small>
+                                    <% if (ticket.attachment_path) { %>
+                                        <br><small><a href="<%= ticket.attachment_path %>" target="_blank" rel="noopener" style="color: #2563eb;">View attachment</a></small>
+                                    <% } %>
+                                </td>
+                                <td style="padding: 12px 10px; color: #334155;"><%= ticket.location %></td>
+                                <td style="padding: 12px 10px; color: #334155;"><%= ticket.is_anonymous ? 'Anonymous' : (ticket.user_id ? 'Registered user' : 'Guest') %></td>
+                                <td style="padding: 12px 10px;"><span class="status-pill" style="padding: 3px 8px; background: #e0f2fe; color: #0369a1; border-radius: 4px; font-size: 12px;"><%= ticket.status %></span></td>
+                                <td style="padding: 12px 10px;">
+                                    <form action="/admin/ticket/<%= ticket.id %>/update" method="POST" style="min-width:200px;">
+                                        <label for="status-<%= ticket.id %>" style="display:none;">Status for <%= ticket.tracking_code %></label>
+                                        <select id="status-<%= ticket.id %>" name="status" style="width: 100%; padding: 6px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                                            <% ['Submitted', 'Under Review', 'In Progress', 'Resolved', 'Closed'].forEach(status => { %>
+                                                <option value="<%= status %>" <%= ticket.status === status ? 'selected' : '' %>><%= status %></option>
+                                            <% }) %>
+                                        </select>
+                                        <label for="remarks-<%= ticket.id %>" style="display:none;">Remarks for <%= ticket.tracking_code %></label>
+                                        <input type="text" id="remarks-<%= ticket.id %>" name="admin_remarks" placeholder="Add official remark..." maxlength="500" value="<%= ticket.admin_remarks || '' %>" style="width: 100%; padding: 6px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                                        <button type="submit" class="btn btn-success" style="width:100%; padding: 8px; background: #0d4d3e; color: white; border: none; border-radius: 4px; cursor: pointer;">Update Ticket</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                        <tr id="no-results" style="display:none;">
+                            <td colspan="6" style="padding: 20px; text-align: center; color: #64748b;">No tickets match your search.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         <% } %>
     </div>
 
     <script>
-        // Filters the rows already on the page. No extra database query is made.
         (function () {
             var search = document.getElementById('ticket-search');
             var statusFilter = document.getElementById('status-filter');
