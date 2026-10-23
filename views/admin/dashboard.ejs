@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - School Feedback System</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/button.css">
     <style>
         /* Dashboard-specific readability overrides */
         body {
@@ -28,10 +29,10 @@
                 <h2 style="margin:0; color:#0f172a;">Admin Dashboard</h2>
                 <p style="margin:8px 0 0; color:#475569;">Ticket management queue</p>
             </div>
-            <div>
-                <a href="/" class="secondary-link">Back to Home</a>
-                <span class="divider" style="margin: 0 8px; color: #cbd5e1;">|</span>
-                <a href="/auth/logout" class="secondary-link" style="color: #dc2626;">Log Out</a>
+            <div class="header-actions">
+                <a href="/dashboard" class="nav-btn nav-btn-secondary">Back to Dashboard</a>
+                <a href="/" class="nav-btn nav-btn-secondary">Back to Home</a>
+                <a href="/auth/logout" class="nav-btn nav-btn-danger">Log Out</a>
             </div>
         </div>
 
