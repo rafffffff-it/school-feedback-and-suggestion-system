@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/button.css">
 </head>
 <body class="dashboard-body">
     <main class="simple-page profile-page">
-        <a href="/dashboard" class="simple-back-link">← Back to dashboard</a>
+        <div style="margin-bottom: 20px;">
+            <a href="/dashboard" class="nav-btn nav-btn-secondary">← Back to Dashboard</a>
+        </div>
         <section class="simple-card profile-card">
             <header class="profile-heading">
                 <div class="profile-large-avatar"><%= user.name.charAt(0).toUpperCase() %></div>

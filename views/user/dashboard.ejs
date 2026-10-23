@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - EDUVoice</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/button.css">
 </head>
 <body class="dashboard-body">
   <div class="dashboard-shell">
@@ -28,7 +29,11 @@
         </div>
       <% } %>
 
-      <a class="dashboard-nav-item dashboard-logout" href="/auth/logout"><span aria-hidden="true">⇥</span>Logout</a>
+      <div style="padding: 0 16px; margin-top: auto;">
+        <a class="nav-btn nav-btn-danger" href="/auth/logout" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <span aria-hidden="true">⇥</span> Logout
+        </a>
+      </div>
     </aside>
 
     <main class="dashboard-main">

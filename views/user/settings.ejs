@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings - EDUVoice</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/button.css">
 </head>
 <body class="dashboard-body">
   <main class="simple-page">
-    <a class="simple-back-link" href="/dashboard">← Back to dashboard</a>
+    <div style="margin-bottom: 20px;">
+      <a href="/dashboard" class="nav-btn nav-btn-secondary">← Back to Dashboard</a>
+    </div>
     <section class="simple-card">
       <h1>Settings</h1>
       <p>Manage the name shown on your EDUVoice account.</p>
@@ -20,7 +23,9 @@
         <div class="settings-account-email"><strong>Account email</strong><span><%= user.email %></span></div>
         <button class="dashboard-action primary" type="submit">Save Settings</button>
       </form>
-      <a class="simple-secondary-link" href="/auth/profile">View Profile</a>
+      <div style="margin-top: 15px;">
+        <a class="nav-btn nav-btn-secondary" href="/auth/profile">View Profile</a>
+      </div>
     </section>
   </main>
 </body>
