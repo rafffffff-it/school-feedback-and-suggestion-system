@@ -18,3 +18,4 @@ This is a group project for Application Development & Emerging Technologies.
 
 The provided SQL dump includes a sample admin account (`admin@school.edu` / `admin123`). Change that password before using this application beyond local development.
 
+This was the third iteration of the project, done and branched by Aris Robert Lagatic
