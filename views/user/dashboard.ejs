@@ -21,10 +21,15 @@
       </nav>
 
       <!-- Conditionally render Admin Dashboard option if user role is admin -->
+      <!-- Conditionally render Admin Dashboard option if user role is admin -->
       <% if (user && user.role === 'admin') { %>
-        <div style="padding: 0 16px; margin-bottom: 10px;">
-          <a class="dashboard-nav-item" href="/admin/dashboard" style="background-color: rgba(13, 77, 62, 0.1); color: #0d4d3e; font-weight: 600;">
-            <span aria-hidden="true">🛡</span> Admin Dashboard
+        <div style="padding: 0 16px; margin-top: 18px; margin-bottom: 12px;">
+          <a href="/admin/dashboard" 
+             style="background: #ffffff; color: #0f172a; border: 2px solid #f59e0b; border-radius: 8px; font-weight: 600; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.06); text-decoration: none; width: 100%; box-sizing: border-box; overflow: hidden;">
+            <span style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #0f172a;">
+              <span aria-hidden="true">🛡️</span> Admin Panel
+            </span>
+            <span style="background: #fef3c7; color: #b45309; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; flex-shrink: 0; display: inline-block;">ADMIN</span>
           </a>
         </div>
       <% } %>
