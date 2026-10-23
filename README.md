@@ -18,3 +18,5 @@ This is a group project for Application Development & Emerging Technologies.
 
 The provided SQL dump includes a sample admin account (`admin@school.edu` / `admin123`). Change that password before using this application beyond local development.
 
+Added: Login and Registration and Improved UI
+
