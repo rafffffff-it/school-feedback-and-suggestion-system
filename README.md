@@ -6,11 +6,27 @@
 ---
 
 ## 👥 Team Members
-* **[Your Name/Team Lead]** - Lead Developer / Software Architect
-* **[Team Member Name]** - UI/UX Specialist / Developer
-* **[Team Member Name]** - Quality Assurance / Documentation
+* **[Bricenio, Rafael]** - Backend / Routes / Business Logic /Database
+* **[Lagatic, Aris Robert]** - Frontend / Pages / Forms / UI
+* **[Morata, Luther John]** - Frontend/ Database / Authentication / Testing
 
 ---
+
+## AI Disclosure
+* For most of this project, this was created with the assistance of mostly just Google Gemini, 
+Copilot being a second one for the branch feature/login-and-registration.
+
+* In accordance with academic integrity guidelines, Generative AI tools (Gemini / Copilot) were utilized during the development of EDUVoice for the following scope:
+
+* Refactoring & CSS Modularization: Decoupling navigation buttons into a standalone button.css component file (nav-btn-primary, nav-btn-secondary, nav-btn-danger).
+
+* UI/UX Refinements: Solving container overflow and flex-shrink edge cases for high-contrast badge components in sidebar navigation.
+
+* Workflow Standardization: Advising on clean Git branch naming conventions (feature/), pull requests, and atomic commit practices.
+
+* Architectural Evaluation: Establishing soft status closures (Closed/Resolved) for feedback tickets rather than hard SQL deletion to preserve database auditability.
+
+* All AI-generated code snippets and layout configurations were manually reviewed, tested, integrated, and verified by the development team.
 
 ## ✨ Features
 
@@ -45,6 +61,7 @@
 * [XAMPP](https://www.apachefriends.org/) (Apache & MySQL Service)
 * [Git](https://git-scm.com/)
 
+## Installing via VSCode Terminal
 1. a. git --version
    b. npm --version
    c. node --version
