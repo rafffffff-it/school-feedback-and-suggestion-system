@@ -12,6 +12,8 @@
 
 ---
 
+* Branch feature/login-and-registration was made by Luther John Morata
+
 ## AI Disclosure
 * For most of this project, this was created with the assistance of mostly just Google Gemini, 
 Copilot being a second one for the branch feature/login-and-registration.
